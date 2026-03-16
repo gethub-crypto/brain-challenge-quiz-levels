@@ -1,1 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Quiz Game</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+<div class="topbar">
+    <div>❤️ <span id="lives">3</span></div>
+    <button id="shopBtn" onclick="openShop()">Shop</button>
+    <div>🪙 <span id="coins">0</span></div>
+</div>
+
+<div id="map"></div>
+
+<div id="game">
+    <div id="levelTitle"></div>
+    
+    <div id="progressContainer">
+        <div id="progressBar"></div>
+    </div>
+    
+    <div id="progressText"></div>
+    
+    <div id="question"></div>
+    <div id="answers"></div>
+</div>
+
+<div id="reward">
+    <h2>Level Complete</h2>
+    <p>You earned <span id="rewardCoins"></span> coins</p>
+    <button onclick="doubleReward()">x2 Reward (Ad)</button>
+    <button onclick="nextLevel()">Next Level</button>
+</div>
+
+<script src="engine/saveSystem.js"></script>
+<script src="engine/livesSystem.js"></script>
+<script src="engine/economySystem.js"></script>
+
+<script src="game/questions.js"></script>
+<script src="game/levels.js"></script>
+<script src="game/gameplay.js"></script>
+
+</body>
+  </html>
