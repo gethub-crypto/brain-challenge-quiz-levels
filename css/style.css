@@ -6,9 +6,19 @@ body {
     margin: 0;
 }
 
-/* SCREEN SYSTEM */
+/* SCREEN */
 .screen {
     display: none;
+    padding: 20px;
+}
+
+/* START SCREEN */
+#startScreen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 /* TOPBAR */
@@ -21,10 +31,22 @@ body {
 
 /* BUTTONS */
 button {
-    padding: 10px 14px;
-    border-radius: 8px;
+    padding: 14px 20px;
+    border-radius: 12px;
     border: none;
     cursor: pointer;
+    font-size: 16px;
+    background: linear-gradient(180deg, #22c55e, #16a34a);
+    color: white;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
 }
 
 /* MAP */
