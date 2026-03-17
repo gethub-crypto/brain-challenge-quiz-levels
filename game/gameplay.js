@@ -79,7 +79,14 @@ function checkAnswer(selectedIndex, correctIndex){
 
     } else {
 
-        ScreenManager.show("continueScreen");
+        PopupManager.show({
+            title: "Ошибка",
+            text: "Неверный ответ. Что сделать?",
+            buttons: [
+                { text: "📺 Смотреть рекламу", action: watchAd },
+                { text: "❌ Потерять жизнь", action: loseLife }
+            ]
+        });
 
     }
 }
@@ -97,8 +104,16 @@ function loseLife(){
     updateUI();
 
     if (lives <= 0){
-        alert("Game Over");
-        location.reload();
+
+        PopupManager.show({
+            title: "Game Over",
+            text: "Жизни закончились",
+            buttons: [
+                { text: "Начать заново", action: () => location.reload() }
+            ]
+        });
+
+        return;
     }
 
     ScreenManager.show("game");
@@ -108,7 +123,11 @@ function loseLife(){
 function buyRemoveTwo(){
 
     if (coins < 120){
-        alert("Недостаточно монет");
+        PopupManager.show({
+            title: "Ошибка",
+            text: "Недостаточно монет",
+            buttons: [{ text: "OK" }]
+        });
         return;
     }
 
@@ -121,7 +140,11 @@ function buyRemoveTwo(){
 function buySkip(){
 
     if (coins < 100){
-        alert("Недостаточно монет");
+        PopupManager.show({
+            title: "Ошибка",
+            text: "Недостаточно монет",
+            buttons: [{ text: "OK" }]
+        });
         return;
     }
 
@@ -135,14 +158,22 @@ function buySkip(){
 function buyHint(){
 
     if (coins < 200){
-        alert("Недостаточно монет");
+        PopupManager.show({
+            title: "Ошибка",
+            text: "Недостаточно монет",
+            buttons: [{ text: "OK" }]
+        });
         return;
     }
 
     coins -= 200;
     updateUI();
 
-    alert("Ответ: " + currentQuestionData.answers[currentQuestionData.correct]);
+    PopupManager.show({
+        title: "Подсказка",
+        text: "Ответ: " + currentQuestionData.answers[currentQuestionData.correct],
+        buttons: [{ text: "OK" }]
+    });
 }
 
 function removeTwoAnswers(){
@@ -185,5 +216,5 @@ function nextLevel(){
 loadGame();
 createLevels();
 updateUI();
+PopupManager.init();
 ScreenManager.show("startScreen");
-  
