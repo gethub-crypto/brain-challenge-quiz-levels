@@ -11,39 +11,50 @@ function updateUI() {
     saveGame();
 }
 
-function startLevel(level) {
+/* START GAME */
+function startGame(){
+
+    ScreenManager.show("map");
+
+}
+
+/* MAP BUTTON */
+function goToMap(){
+
+    ScreenManager.show("map");
+
+}
+
+/* START LEVEL */
+function startLevel(level){
 
     currentLevel = parseInt(level);
     questionIndex = 0;
 
-    document.getElementById("map").style.display = "none";
-    document.getElementById("reward").style.display = "none";
-    document.getElementById("game").style.display = "block";
-
     document.getElementById("levelTitle").innerText = "Level " + level;
+
+    ScreenManager.show("game");
 
     loadQuestion();
 }
 
-function loadQuestion() {
+/* LOAD QUESTION */
+function loadQuestion(){
 
     let totalQuestions = (currentLevel % 10 === 0) ? 5 : 1;
 
-    if (questionIndex >= totalQuestions) {
+    if (questionIndex >= totalQuestions){
 
         finishLevel();
-
         return;
     }
 
     let q = generateQuestion();
-
     currentQuestionData = q;
 
     document.getElementById("question").innerText = q.question;
 
     let answersDiv = document.getElementById("answers");
-
     answersDiv.innerHTML = "";
 
     q.answers.forEach((a, i) => {
@@ -51,67 +62,73 @@ function loadQuestion() {
         let btn = document.createElement("button");
 
         btn.className = "answer";
-
         btn.innerText = a;
 
         btn.onclick = () => checkAnswer(i, q.correct);
 
         answersDiv.appendChild(btn);
-
     });
-
 }
 
-function checkAnswer(selectedIndex, correctIndex) {
+/* CHECK ANSWER */
+function checkAnswer(selectedIndex, correctIndex){
 
-    if (selectedIndex === correctIndex) {
+    if (selectedIndex === correctIndex){
 
         questionIndex++;
-
         loadQuestion();
 
     } else {
 
-        lives--;
-
-        updateUI();
-
-        if (lives <= 0) {
-
-            alert("Game Over");
-
-            location.reload();
-
-        }
+        ScreenManager.show("continueScreen");
 
     }
+}
+
+/* CONTINUE OPTIONS */
+function watchAd(){
+
+    ScreenManager.show("game");
+    loadQuestion();
 
 }
 
-function finishLevel() {
+function loseLife(){
 
-    document.getElementById("game").style.display = "none";
+    lives--;
 
-    document.getElementById("reward").style.display = "block";
+    updateUI();
+
+    if (lives <= 0){
+
+        alert("Game Over");
+        location.reload();
+    }
+
+    ScreenManager.show("game");
+}
+
+/* FINISH LEVEL */
+function finishLevel(){
 
     reward = (currentLevel % 10 === 0) ? 120 : 20;
 
     document.getElementById("rewardCoins").innerText = reward;
 
+    ScreenManager.show("reward");
 }
 
-function nextLevel() {
+function nextLevel(){
 
     coins += reward;
 
     updateUI();
 
-    document.getElementById("reward").style.display = "none";
-
-    document.getElementById("map").style.display = "flex";
-
+    ScreenManager.show("map");
 }
 
+/* INIT */
 loadGame();
 createLevels();
 updateUI();
+ScreenManager.show("startScreen");
