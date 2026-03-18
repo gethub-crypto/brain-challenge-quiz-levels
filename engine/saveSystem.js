@@ -20,4 +20,4 @@ function loadGame() {
     if (savedProgress) playerProgress = JSON.parse(savedProgress);
 
     recoverOfflineLives();
-}
+        }
