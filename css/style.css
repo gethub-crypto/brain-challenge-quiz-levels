@@ -1,1 +1,96 @@
+body {
+    background: #0f172a;
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+    margin: 0;
+}
 
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 20px;
+    font-size: 20px;
+}
+
+#shopBtn {
+    background: #f59e0b;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+}
+
+#map {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+}
+
+.levelBtn {
+    width: 70px;
+    height: 70px;
+    margin: 10px;
+    border-radius: 50%;
+    border: none;
+    font-size: 20px;
+    background: #1e293b;
+    color: white;
+    cursor: pointer;
+}
+
+.super {
+    background: gold;
+    color: black;
+}
+
+#game {
+    display: none;
+    padding: 20px;
+}
+
+#question {
+    font-size: 22px;
+    margin: 20px 0;
+}
+
+.answer {
+    display: block;
+    width: 90%;
+    margin: 10px auto;
+    padding: 14px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    background: #334155;
+    color: white;
+    cursor: pointer;
+}
+
+.answer:hover {
+    background: #475569;
+}
+
+#progressContainer {
+    width: 90%;
+    height: 12px;
+    background: #1e293b;
+    margin: 10px auto;
+    border-radius: 10px;
+    display: none;
+}
+
+#progressBar {
+    height: 12px;
+    width: 0%;
+    background: #22c55e;
+    border-radius: 10px;
+    transition: width .4s;
+}
+
+#reward {
+    display: none;
+    padding: 20px;
+  }
