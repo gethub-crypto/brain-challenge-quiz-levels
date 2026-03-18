@@ -1,6 +1,5 @@
 let currentLevel = 1;
 let questionIndex = 0;
-let mistakes = 0;
 let currentQuestionData = null;
 
 const livesUI = document.getElementById("lives");
@@ -10,12 +9,15 @@ const lifeTimerUI = document.getElementById("lifeTimer");
 function updateUI() {
     livesUI.innerText = lives;
     coinsUI.innerText = coins;
+
     lifeTimerUI.innerText = getTimeToNextLife();
+
     saveGame();
 }
 
-/* LIFE */
+/* LIFE BUY */
 function buyLifePopup(){
+
     PopupManager.show({
         title:"Купить жизнь?",
         text:"150 монет",
@@ -24,9 +26,11 @@ function buyLifePopup(){
             {text:"Отмена"}
         ]
     });
+
 }
 
 function buyLife(){
+
     if(coins < 150){
         PopupManager.show({
             title:"Ошибка",
@@ -48,7 +52,6 @@ function startGame(){
 
 function goToMap(){
     ScreenManager.show("map");
-    createLevels();
 }
 
 function openShop(){
@@ -60,7 +63,6 @@ function startLevel(level){
 
     currentLevel = parseInt(level);
     questionIndex = 0;
-    mistakes = 0;
 
     ScreenManager.show("game");
     loadQuestion();
@@ -71,20 +73,13 @@ function loadQuestion(){
 
     let totalQuestions = (currentLevel % 10 === 0) ? 5 : 1;
 
-    let progressContainer = document.getElementById("progressContainer");
-
-    if(totalQuestions > 1){
-        progressContainer.style.display = "block";
-        let progress = (questionIndex / totalQuestions) * 100;
-        document.getElementById("progressBar").style.width = progress + "%";
-    } else {
-        progressContainer.style.display = "none";
-    }
-
     if (questionIndex >= totalQuestions){
         finishLevel();
         return;
     }
+
+    let progress = (questionIndex / totalQuestions) * 100;
+    document.getElementById("progressBar").style.width = progress + "%";
 
     let q = generateQuestion();
     currentQuestionData = q;
@@ -113,8 +108,6 @@ function checkAnswer(selectedIndex, correctIndex){
         loadQuestion();
     } else {
 
-        mistakes++;
-
         PopupManager.show({
             title:"Ошибка",
             text:"Неверный ответ",
@@ -123,6 +116,7 @@ function checkAnswer(selectedIndex, correctIndex){
                 {text:"Потерять жизнь", action: loseLife}
             ]
         });
+
     }
 }
 
@@ -149,43 +143,25 @@ function loseLife(){
 
         return;
     }
+
 }
 
 /* FINISH */
 function finishLevel(){
 
-    let baseReward = (currentLevel % 10 === 0) ? 120 : 20;
+    let reward = (currentLevel % 10 === 0) ? 120 : 20;
 
-    let stars = 3;
-    if(mistakes === 1) stars = 2;
-    if(mistakes >= 2) stars = 1;
-
-    playerProgress[currentLevel] = { stars };
-
-    saveGame();
+    coins += reward;
+    updateUI();
 
     PopupManager.show({
         title:"Уровень пройден",
-        text:`Награда: ${baseReward} монет\nЗвезды: ${"⭐".repeat(stars)}`,
+        text:`Награда: ${reward} монет`,
         buttons:[
-            {
-                text:"📺 x2 награда",
-                action: ()=>{
-                    coins += baseReward * 2;
-                    updateUI();
-                    ScreenManager.show("map");
-                }
-            },
-            {
-                text:"Далее",
-                action: ()=>{
-                    coins += baseReward;
-                    updateUI();
-                    ScreenManager.show("map");
-                }
-            }
+            {text:"Далее", action: ()=>ScreenManager.show("map")}
         ]
     });
+
 }
 
 /* INIT */
@@ -195,5 +171,5 @@ updateUI();
 PopupManager.init();
 ScreenManager.show("startScreen");
 
-/* TIMER */
+/* TIMER UI */
 setInterval(updateUI,1000);
