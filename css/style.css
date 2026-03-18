@@ -6,13 +6,11 @@ body {
     margin: 0;
 }
 
-/* SCREEN */
 .screen {
     display: none;
     padding: 20px;
 }
 
-/* START SCREEN */
 #startScreen {
     display: flex;
     flex-direction: column;
@@ -21,7 +19,6 @@ body {
     height: 100vh;
 }
 
-/* TOPBAR */
 .topbar {
     display: flex;
     justify-content: space-between;
@@ -29,24 +26,29 @@ body {
     font-size: 20px;
 }
 
-/* BUTTONS */
 button {
-    padding: 14px 20px;
-    border-radius: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
     border: none;
     cursor: pointer;
-    font-size: 16px;
-    background: linear-gradient(180deg, #22c55e, #16a34a);
+    background: #22c55e;
     color: white;
-    transition: 0.2s;
 }
 
-button:hover {
-    transform: scale(1.05);
+/* PROGRESS */
+#progressContainer {
+    width: 90%;
+    height: 10px;
+    background: #1e293b;
+    margin: 10px auto;
+    border-radius: 10px;
 }
 
-button:active {
-    transform: scale(0.95);
+#progressBar {
+    height: 100%;
+    width: 0%;
+    background: #22c55e;
+    border-radius: 10px;
 }
 
 /* MAP */
@@ -54,7 +56,6 @@ button:active {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding: 20px;
 }
 
 .levelBtn {
@@ -77,58 +78,24 @@ button:active {
     width: 90%;
     margin: 10px auto;
     padding: 14px;
-    font-size: 18px;
     background: #334155;
-    color: white;
 }
 
-.answer:hover {
-    background: #475569;
-}
-
-/* ========================= */
-/* POPUP SYSTEM */
-/* ========================= */
-
+/* POPUP */
 .popup {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-
-    display: none;
-    justify-content: center;
-    align-items: center;
-
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 999;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,0.7);
 }
 
 .popup-content {
-    background: #1e293b;
-    padding: 20px;
-    border-radius: 12px;
-    width: 80%;
-    max-width: 320px;
-
-    animation: popupShow 0.25s ease;
-}
-
-#popupButtons button {
-    display: block;
-    width: 100%;
-    margin-top: 10px;
-}
-
-/* POPUP ANIMATION */
-@keyframes popupShow {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+    background:#1e293b;
+    padding:20px;
+    border-radius:12px;
     }
