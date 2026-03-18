@@ -1,18 +1,34 @@
 let currentLevel = 1;
 let questionIndex = 0;
 let mistakes = 0;
-
-const livesUI = document.getElementById("lives");
-const coinsUI = document.getElementById("coins");
+let currentQuestionData = null;
 
 /* UI */
+const livesUI = document.getElementById("lives");
+const coinsUI = document.getElementById("coins");
+const lifeTimerUI = document.getElementById("lifeTimer");
+
+/* ========================= */
+/* UI ОБНОВЛЕНИЕ */
+/* ========================= */
+
 function updateUI(){
-    livesUI.innerText = lives;
-    coinsUI.innerText = coins;
-    saveGame();
+    if(livesUI) livesUI.innerText = lives;
+    if(coinsUI) coinsUI.innerText = coins;
+
+    if(lifeTimerUI && typeof getTimeToNextLife === "function"){
+        lifeTimerUI.innerText = getTimeToNextLife();
+    }
+
+    if(typeof saveGame === "function"){
+        saveGame();
+    }
 }
 
-/* BUY LIFE */
+/* ========================= */
+/* ПОКУПКА ЖИЗНИ */
+/* ========================= */
+
 function buyLife(){
 
     if(coins < 150){
@@ -26,34 +42,72 @@ function buyLife(){
 
     coins -= 150;
     lives++;
+
     updateUI();
 }
 
-/* SHOP POPUP (на уровне) */
-function openShop(){
-
+/* кнопка + */
+function buyLifePopup(){
     PopupManager.show({
-        title:"Магазин",
-        text:"Выберите покупку",
+        title:"Купить жизнь",
+        text:"Стоимость: 150 монет",
         buttons:[
-            {text:"Удалить 2 ответа (120)", action: buyRemoveTwo},
-            {text:"Пропустить (100)", action: buySkip},
-            {text:"Подсказка (200)", action: buyHint},
-            {text:"Купить жизнь (150)", action: buyLife},
-            {text:"Закрыть"}
+            {text:"Купить", action: buyLife},
+            {text:"Отмена"}
         ]
     });
 }
 
-/* START */
+/* ========================= */
+/* МАГАЗИН */
+/* ========================= */
+
+function openShop(){
+
+    // если мы в игре — показываем popup
+    if(ScreenManager.current === "game"){
+
+        PopupManager.show({
+            title:"Магазин",
+            text:"Выберите покупку",
+            buttons:[
+                {text:"Удалить 2 ответа (120)", action: buyRemoveTwo},
+                {text:"Пропустить вопрос (100)", action: buySkip},
+                {text:"Показать ответ (200)", action: buyHint},
+                {text:"Купить жизнь (150)", action: buyLife},
+                {text:"Закрыть"}
+            ]
+        });
+
+    } else {
+        // обычный экран магазина
+        ScreenManager.show("shop");
+    }
+}
+
+/* ========================= */
+/* НАВИГАЦИЯ */
+/* ========================= */
+
 function startGame(){
     ScreenManager.show("map");
 }
 
-/* LEVEL */
+function goToMap(){
+    ScreenManager.show("map");
+
+    if(typeof createLevels === "function"){
+        createLevels();
+    }
+}
+
+/* ========================= */
+/* УРОВЕНЬ */
+/* ========================= */
+
 function startLevel(level){
 
-    currentLevel = level;
+    currentLevel = parseInt(level);
     questionIndex = 0;
     mistakes = 0;
 
@@ -61,27 +115,35 @@ function startLevel(level){
     loadQuestion();
 }
 
-/* QUESTION */
+/* ========================= */
+/* ВОПРОС */
+/* ========================= */
+
 function loadQuestion(){
 
-    let total = (currentLevel % 10 === 0) ? 5 : 1;
+    let totalQuestions = (currentLevel % 10 === 0) ? 5 : 1;
 
     let progressContainer = document.getElementById("progressContainer");
+    let progressBar = document.getElementById("progressBar");
 
-    if(total === 5){
-        progressContainer.style.display = "block";
-        document.getElementById("progressBar").style.width =
-            (questionIndex / total * 100) + "%";
+    /* ПРОГРЕСС ТОЛЬКО ДЛЯ 5 ВОПРОСОВ */
+    if(totalQuestions === 5){
+        if(progressContainer) progressContainer.style.display = "block";
+
+        let progress = (questionIndex / totalQuestions) * 100;
+        if(progressBar) progressBar.style.width = progress + "%";
+
     } else {
-        progressContainer.style.display = "none";
+        if(progressContainer) progressContainer.style.display = "none";
     }
 
-    if(questionIndex >= total){
+    if(questionIndex >= totalQuestions){
         finishLevel();
         return;
     }
 
     let q = generateQuestion();
+    currentQuestionData = q;
 
     document.getElementById("question").innerText = q.question;
 
@@ -89,21 +151,31 @@ function loadQuestion(){
     answersDiv.innerHTML = "";
 
     q.answers.forEach((a, i)=>{
+
         let btn = document.createElement("button");
         btn.className = "answer";
         btn.innerText = a;
+
         btn.onclick = ()=>checkAnswer(i, q.correct);
+
         answersDiv.appendChild(btn);
     });
 }
 
-/* ANSWER */
-function checkAnswer(i, correct){
+/* ========================= */
+/* ОТВЕТ */
+/* ========================= */
 
-    if(i === correct){
+function checkAnswer(selectedIndex, correctIndex){
+
+    if(selectedIndex === correctIndex){
+
         questionIndex++;
         loadQuestion();
+
     } else {
+
+        mistakes++;
 
         PopupManager.show({
             title:"Ошибка",
@@ -128,38 +200,65 @@ function checkAnswer(i, correct){
     }
 }
 
-/* LIFE */
+/* ========================= */
+/* ЖИЗНИ */
+/* ========================= */
+
 function loseLife(){
+
     lives--;
     updateUI();
 
     if(lives <= 0){
+
         PopupManager.show({
             title:"Game Over",
             text:"Жизни закончились",
-            buttons:[{text:"OK"}]
+            buttons:[
+                {text:"Начать заново", action: ()=>location.reload()}
+            ]
         });
+
+        return;
     }
 }
 
-/* FINISH */
+/* ========================= */
+/* ЗАВЕРШЕНИЕ УРОВНЯ */
+/* ========================= */
+
 function finishLevel(){
 
-    let reward = (currentLevel % 10 === 0) ? 120 : 20;
+    let baseReward = (currentLevel % 10 === 0) ? 120 : 20;
+
+    let stars = 3;
+    if(mistakes === 1) stars = 2;
+    if(mistakes >= 2) stars = 1;
+
+    // сохранение прогресса
+    if(typeof playerProgress !== "undefined"){
+        playerProgress[currentLevel] = { stars };
+    }
+
+    if(typeof saveGame === "function"){
+        saveGame();
+    }
 
     PopupManager.show({
         title:"Уровень пройден",
-        text:`Награда: ${reward}`,
+        text:`Награда: ${baseReward} монет\nЗвезды: ${"⭐".repeat(stars)}`,
         buttons:[
             {
-                text:"📺 x2 за рекламу",
+                text:"📺 x2 награда",
                 action: ()=>{
                     AdManager.showRewardedAd((success)=>{
+
                         if(success){
-                            coins += reward * 2;
+                            coins += baseReward * 2;
                         } else {
-                            coins += reward;
+                            coins += baseReward;
                         }
+
                         updateUI();
                         ScreenManager.show("map");
                     });
@@ -168,7 +267,7 @@ function finishLevel(){
             {
                 text:"Забрать",
                 action: ()=>{
-                    coins += reward;
+                    coins += baseReward;
                     updateUI();
                     ScreenManager.show("map");
                 }
@@ -177,6 +276,25 @@ function finishLevel(){
     });
 }
 
+/* ========================= */
 /* INIT */
-loadGame();
+/* ========================= */
+
+if(typeof loadGame === "function"){
+    loadGame();
+}
+
+if(typeof createLevels === "function"){
+    createLevels();
+}
+
 updateUI();
+
+if(typeof PopupManager !== "undefined"){
+    PopupManager.init();
+}
+
+ScreenManager.show("startScreen");
+
+/* обновление таймера */
+setInterval(updateUI, 1000);
