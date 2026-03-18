@@ -19,3 +19,16 @@ const AdManager = {
     }
 
 };
+
+const AdManager = {
+
+    showRewardedAd(callback){
+
+        console.log("Fake Ad...");
+
+        setTimeout(() => {
+            callback(true); // всегда "просмотрено"
+        }, 1000);
+    }
+
+};
