@@ -12,7 +12,7 @@ body {
     padding: 20px;
 }
 
-/* START */
+/* START SCREEN */
 #startScreen {
     display: flex;
     flex-direction: column;
@@ -29,16 +29,24 @@ body {
     font-size: 20px;
 }
 
-/* BUTTON */
+/* BUTTONS */
 button {
-    padding: 14px;
+    padding: 14px 20px;
     border-radius: 12px;
     border: none;
     cursor: pointer;
     font-size: 16px;
     background: linear-gradient(180deg, #22c55e, #16a34a);
     color: white;
-    margin-top: 10px;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
 }
 
 /* MAP */
@@ -46,6 +54,7 @@ button {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    padding: 20px;
 }
 
 .levelBtn {
@@ -53,18 +62,13 @@ button {
     height: 70px;
     margin: 10px;
     border-radius: 50%;
+    background: #1e293b;
+    color: white;
 }
 
 .super {
     background: gold;
     color: black;
-}
-
-/* SHOP (ЦЕНТР) */
-#shop {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 /* ANSWERS */
@@ -73,43 +77,58 @@ button {
     width: 90%;
     margin: 10px auto;
     padding: 14px;
+    font-size: 18px;
     background: #334155;
+    color: white;
 }
 
-/* PROGRESS */
-#progressContainer {
-    width: 100%;
-    background: #1e293b;
-    height: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    display: none;
+.answer:hover {
+    background: #475569;
 }
 
-#progressBar {
-    height: 10px;
-    background: #22c55e;
-    width: 0%;
-}
+/* ========================= */
+/* POPUP SYSTEM */
+/* ========================= */
 
-/* POPUP */
 .popup {
     position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.7);
+
     display: none;
     justify-content: center;
     align-items: center;
+
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 999;
 }
 
 .popup-content {
     background: #1e293b;
     padding: 20px;
     border-radius: 12px;
-    width: 300px;
+    width: 80%;
+    max-width: 320px;
+
+    animation: popupShow 0.25s ease;
 }
 
 #popupButtons button {
+    display: block;
     width: 100%;
+    margin-top: 10px;
+}
+
+/* POPUP ANIMATION */
+@keyframes popupShow {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
