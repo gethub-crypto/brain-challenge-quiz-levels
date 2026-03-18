@@ -6,11 +6,13 @@ body {
     margin: 0;
 }
 
+/* SCREEN */
 .screen {
     display: none;
     padding: 20px;
 }
 
+/* START */
 #startScreen {
     display: flex;
     flex-direction: column;
@@ -19,6 +21,7 @@ body {
     height: 100vh;
 }
 
+/* TOPBAR */
 .topbar {
     display: flex;
     justify-content: space-between;
@@ -26,29 +29,16 @@ body {
     font-size: 20px;
 }
 
+/* BUTTON */
 button {
-    padding: 10px 14px;
-    border-radius: 10px;
+    padding: 14px;
+    border-radius: 12px;
     border: none;
     cursor: pointer;
-    background: #22c55e;
+    font-size: 16px;
+    background: linear-gradient(180deg, #22c55e, #16a34a);
     color: white;
-}
-
-/* PROGRESS */
-#progressContainer {
-    width: 90%;
-    height: 10px;
-    background: #1e293b;
-    margin: 10px auto;
-    border-radius: 10px;
-}
-
-#progressBar {
-    height: 100%;
-    width: 0%;
-    background: #22c55e;
-    border-radius: 10px;
+    margin-top: 10px;
 }
 
 /* MAP */
@@ -63,13 +53,18 @@ button {
     height: 70px;
     margin: 10px;
     border-radius: 50%;
-    background: #1e293b;
-    color: white;
 }
 
 .super {
     background: gold;
     color: black;
+}
+
+/* SHOP (ЦЕНТР) */
+#shop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* ANSWERS */
@@ -81,21 +76,40 @@ button {
     background: #334155;
 }
 
+/* PROGRESS */
+#progressContainer {
+    width: 100%;
+    background: #1e293b;
+    height: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: none;
+}
+
+#progressBar {
+    height: 10px;
+    background: #22c55e;
+    width: 0%;
+}
+
 /* POPUP */
 .popup {
     position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    display:none;
-    justify-content:center;
-    align-items:center;
-    background:rgba(0,0,0,0.7);
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
 }
 
 .popup-content {
-    background:#1e293b;
-    padding:20px;
-    border-radius:12px;
-    }
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+}
+
+#popupButtons button {
+    width: 100%;
+}
