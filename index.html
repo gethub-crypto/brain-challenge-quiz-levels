@@ -20,7 +20,11 @@
 
 <!-- TOP BAR -->
 <div class="topbar">
-    <div>❤️ <span id="lives">3</span></div>
+    <div>
+        ❤️ <span id="lives">3</span>
+        <span id="lifeTimer"></span>
+        <button onclick="buyLifePopup()">➕</button>
+    </div>
 
     <button onclick="openShop()">🛒 Shop</button>
     <button onclick="goToMap()">🗺 Map</button>
@@ -44,21 +48,6 @@
     <div id="answers"></div>
 </div>
 
-<!-- REWARD -->
-<div id="reward" class="screen">
-    <h2>Level Complete</h2>
-    <p>You earned <span id="rewardCoins"></span> coins</p>
-    <button onclick="doubleReward()">x2 Reward (Ad)</button>
-    <button onclick="nextLevel()">Next Level</button>
-</div>
-
-<!-- CONTINUE -->
-<div id="continueScreen" class="screen">
-    <h2>Wrong answer</h2>
-    <button onclick="watchAd()">📺 Continue (Ad)</button>
-    <button onclick="loseLife()">❌ Lose Life</button>
-</div>
-
 <!-- SHOP -->
 <div id="shop" class="screen">
     <h2>Shop</h2>
@@ -66,12 +55,23 @@
     <button onclick="buyRemoveTwo()">Удалить 2 ответа (120)</button>
     <button onclick="buySkip()">Пропустить вопрос (100)</button>
     <button onclick="buyHint()">Показать ответ (200)</button>
+    <button onclick="buyLife()">Купить жизнь (150)</button>
 
     <br><br>
     <button onclick="goToMap()">⬅ Назад</button>
 </div>
 
+<!-- POPUP -->
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <h2 id="popupTitle"></h2>
+        <p id="popupText"></p>
+        <div id="popupButtons"></div>
+    </div>
+</div>
+
 <script src="engine/screenManager.js"></script>
+<script src="engine/popupManager.js"></script>
 <script src="engine/saveSystem.js"></script>
 <script src="engine/livesSystem.js"></script>
 <script src="engine/economySystem.js"></script>
@@ -81,4 +81,4 @@
 <script src="game/gameplay.js"></script>
 
 </body>
-                    </html>
+</html>
