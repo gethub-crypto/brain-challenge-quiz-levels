@@ -12,34 +12,54 @@
 </head>
 <body>
 
+<!-- START SCREEN -->
+<div id="startScreen" class="screen">
+    <h1>Quiz Game</h1>
+    <button onclick="startGame()">Start</button>
+</div>
+
+<!-- TOP BAR -->
 <div class="topbar">
     <div>❤️ <span id="lives">3</span></div>
-    <button id="shopBtn" onclick="openShop()">Shop</button>
+
+    <button onclick="openShop()">🛒 Shop</button>
+    <button onclick="goToMap()">🗺 Map</button>
+
     <div>🪙 <span id="coins">0</span></div>
 </div>
 
-<div id="map"></div>
+<!-- MAP -->
+<div id="map" class="screen"></div>
 
-<div id="game">
+<!-- GAME -->
+<div id="game" class="screen">
     <div id="levelTitle"></div>
-    
+
     <div id="progressContainer">
         <div id="progressBar"></div>
     </div>
-    
+
     <div id="progressText"></div>
-    
     <div id="question"></div>
     <div id="answers"></div>
 </div>
 
-<div id="reward">
+<!-- REWARD -->
+<div id="reward" class="screen">
     <h2>Level Complete</h2>
     <p>You earned <span id="rewardCoins"></span> coins</p>
     <button onclick="doubleReward()">x2 Reward (Ad)</button>
     <button onclick="nextLevel()">Next Level</button>
 </div>
 
+<!-- CONTINUE -->
+<div id="continueScreen" class="screen">
+    <h2>Wrong answer</h2>
+    <button onclick="watchAd()">📺 Continue (Ad)</button>
+    <button onclick="loseLife()">❌ Lose Life</button>
+</div>
+
+<script src="engine/screenManager.js"></script>
 <script src="engine/saveSystem.js"></script>
 <script src="engine/livesSystem.js"></script>
 <script src="engine/economySystem.js"></script>
@@ -49,4 +69,4 @@
 <script src="game/gameplay.js"></script>
 
 </body>
-  </html>
+        </html>
