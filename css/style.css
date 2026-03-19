@@ -6,11 +6,13 @@ body {
     margin: 0;
 }
 
+/* SCREEN */
 .screen {
     display: none;
     padding: 20px;
 }
 
+/* START SCREEN */
 #startScreen {
     display: flex;
     flex-direction: column;
@@ -19,6 +21,7 @@ body {
     height: 100vh;
 }
 
+/* TOPBAR */
 .topbar {
     display: flex;
     justify-content: space-between;
@@ -26,29 +29,24 @@ body {
     font-size: 20px;
 }
 
+/* BUTTONS */
 button {
-    padding: 10px 14px;
-    border-radius: 10px;
+    padding: 14px 20px;
+    border-radius: 12px;
     border: none;
     cursor: pointer;
-    background: #22c55e;
+    font-size: 16px;
+    background: linear-gradient(180deg, #22c55e, #16a34a);
     color: white;
+    transition: 0.2s;
 }
 
-/* PROGRESS */
-#progressContainer {
-    width: 90%;
-    height: 10px;
-    background: #1e293b;
-    margin: 10px auto;
-    border-radius: 10px;
+button:hover {
+    transform: scale(1.05);
 }
 
-#progressBar {
-    height: 100%;
-    width: 0%;
-    background: #22c55e;
-    border-radius: 10px;
+button:active {
+    transform: scale(0.95);
 }
 
 /* MAP */
@@ -56,6 +54,7 @@ button {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    padding: 20px;
 }
 
 .levelBtn {
@@ -78,24 +77,18 @@ button {
     width: 90%;
     margin: 10px auto;
     padding: 14px;
+    font-size: 18px;
     background: #334155;
+    color: white;
 }
 
-/* POPUP */
-.popup {
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    display:none;
-    justify-content:center;
-    align-items:center;
-    background:rgba(0,0,0,0.7);
+.answer:hover {
+    background: #475569;
 }
 
-.popup-content {
-    background:#1e293b;
-    padding:20px;
-    border-radius:12px;
-}
+
+
+
+
+
+
