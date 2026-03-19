@@ -20,27 +20,21 @@ function recoverOfflineLives() {
     }
 }
 
-function getTimeToNextLife(){
-
-    if(lives >= MAX_LIVES) return "";
-
-    let remaining = LIFE_REGEN_TIME - (Date.now() - lastLifeTime);
-
-    let sec = Math.floor(remaining / 1000);
-    let min = Math.floor(sec / 60);
-
-    sec = sec % 60;
-
-    return `${min}:${sec.toString().padStart(2,"0")}`;
-}
-
 setInterval(() => {
 
     if (lives < MAX_LIVES) {
 
         lives++;
         lastLifeTime = Date.now();
+
         updateUI();
     }
 
 }, LIFE_REGEN_TIME);
+
+
+
+
+
+
+
