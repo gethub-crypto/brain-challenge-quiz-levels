@@ -5,7 +5,8 @@ const ScreenManager = {
         "map",
         "game",
         "reward",
-        "continueScreen"
+        "continueScreen",
+        "shop"
     ],
 
     show(screenId){
@@ -15,11 +16,27 @@ const ScreenManager = {
             const el = document.getElementById(id);
 
             if(el){
-                el.style.display = (id === screenId) ? "block" : "none";
+
+                if(id === screenId){
+
+                    el.style.display = "block";
+                    el.style.opacity = 0;
+
+                    setTimeout(()=>{
+                        el.style.transition = "0.3s";
+                        el.style.opacity = 1;
+                    },10);
+
+                }else{
+
+                    el.style.display = "none";
+
+                }
+
             }
 
         });
 
     }
 
-                             }
+                        }
