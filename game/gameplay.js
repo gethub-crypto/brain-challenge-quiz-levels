@@ -11,21 +11,21 @@ function updateUI() {
     saveGame();
 }
 
-/* START GAME */
+/* START */
 function startGame(){
-
     ScreenManager.show("map");
-
 }
 
-/* MAP BUTTON */
 function goToMap(){
-
     ScreenManager.show("map");
-
 }
 
-/* START LEVEL */
+/* SHOP */
+function openShop(){
+    ScreenManager.show("shop");
+}
+
+/* LEVEL */
 function startLevel(level){
 
     currentLevel = parseInt(level);
@@ -38,13 +38,12 @@ function startLevel(level){
     loadQuestion();
 }
 
-/* LOAD QUESTION */
+/* QUESTION */
 function loadQuestion(){
 
     let totalQuestions = (currentLevel % 10 === 0) ? 5 : 1;
 
     if (questionIndex >= totalQuestions){
-
         finishLevel();
         return;
     }
@@ -70,7 +69,7 @@ function loadQuestion(){
     });
 }
 
-/* CHECK ANSWER */
+/* ANSWER */
 function checkAnswer(selectedIndex, correctIndex){
 
     if (selectedIndex === correctIndex){
@@ -85,12 +84,10 @@ function checkAnswer(selectedIndex, correctIndex){
     }
 }
 
-/* CONTINUE OPTIONS */
+/* CONTINUE */
 function watchAd(){
-
     ScreenManager.show("game");
     loadQuestion();
-
 }
 
 function loseLife(){
@@ -100,7 +97,6 @@ function loseLife(){
     updateUI();
 
     if (lives <= 0){
-
         alert("Game Over");
         location.reload();
     }
@@ -108,7 +104,65 @@ function loseLife(){
     ScreenManager.show("game");
 }
 
-/* FINISH LEVEL */
+/* SHOP LOGIC */
+function buyRemoveTwo(){
+
+    if (coins < 120){
+        alert("Недостаточно монет");
+        return;
+    }
+
+    coins -= 120;
+    updateUI();
+
+    removeTwoAnswers();
+}
+
+function buySkip(){
+
+    if (coins < 100){
+        alert("Недостаточно монет");
+        return;
+    }
+
+    coins -= 100;
+    updateUI();
+
+    questionIndex++;
+    loadQuestion();
+}
+
+function buyHint(){
+
+    if (coins < 200){
+        alert("Недостаточно монет");
+        return;
+    }
+
+    coins -= 200;
+    updateUI();
+
+    alert("Ответ: " + currentQuestionData.answers[currentQuestionData.correct]);
+}
+
+function removeTwoAnswers(){
+
+    let buttons = document.querySelectorAll(".answer");
+    let removed = 0;
+
+    buttons.forEach((btn, i) => {
+
+        if (i !== currentQuestionData.correct && removed < 2){
+
+            btn.style.display = "none";
+            removed++;
+
+        }
+
+    });
+}
+
+/* FINISH */
 function finishLevel(){
 
     reward = (currentLevel % 10 === 0) ? 120 : 20;
