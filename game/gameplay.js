@@ -1,271 +1,197 @@
-// =======================
-// ГЛОБАЛЬНЫЕ ДАННЫЕ
-// =======================
 
-let coins = parseInt(localStorage.getItem("coins")) || 100;
-let lives = parseInt(localStorage.getItem("lives")) || 5;
-let unlockedLevel = parseInt(localStorage.getItem("unlockedLevel")) || 1;
-
-let questionIndex = 0;
 let currentLevel = 1;
-let streak = 0;
+let questionIndex = 0;
+let currentQuestionData = null;
 
-let currentQuestions = [];
+const livesUI = document.getElementById("lives");
+const coinsUI = document.getElementById("coins");
 
-
-// =======================
-// СОХРАНЕНИЕ
-// =======================
-
-function saveGame(){
-    localStorage.setItem("coins", coins);
-    localStorage.setItem("lives", lives);
-    localStorage.setItem("unlockedLevel", unlockedLevel);
-}
-
-
-// =======================
-// UI ОБНОВЛЕНИЕ
-// =======================
-
-function updateUI(){
-    const coinsEl = document.getElementById("coins");
-    const livesEl = document.getElementById("lives");
-
-    if (coinsEl) coinsEl.innerText = coins;
-    if (livesEl) livesEl.innerText = lives;
-
+function updateUI() {
+    livesUI.innerText = lives;
+    coinsUI.innerText = coins;
     saveGame();
 }
 
-
-// =======================
-// POPUP
-// =======================
-
-function notEnoughCoins(){
-    alert("Недостаточно монет!"); // можно потом заменить на красивый popup
+/* START */
+function startGame(){
+    ScreenManager.show("map");
 }
 
-
-// =======================
-// ЖИЗНИ
-// =======================
-
-function loseLife(){
-    lives--;
-
-    if (lives < 0) lives = 0;
-
-    updateUI();
-
-    if (lives === 0){
-        showGameOver();
-    }
+function goToMap(){
+    ScreenManager.show("map");
 }
 
-
-// =======================
-// РЕКЛАМА (заглушка)
-// =======================
-
-function rewardAd(){
-    coins += 50;
-    lives += 1;
-
-    updateUI();
+/* SHOP */
+function openShop(){
+    ScreenManager.show("shop");
 }
 
+/* LEVEL */
+function startLevel(level){
 
-// =======================
-// ЗАПУСК УРОВНЯ
-// =======================
-
-function startLevel(level, questions){
-    if (level > unlockedLevel){
-        return;
-    }
-
-    currentLevel = level;
-    currentQuestions = questions;
-
+    currentLevel = parseInt(level);
     questionIndex = 0;
-    streak = 0;
 
-    ScreenManager.show("gameScreen");
+    document.getElementById("levelTitle").innerText = "Level " + level;
+
+    ScreenManager.show("game");
+
     loadQuestion();
 }
 
-
-// =======================
-// ЗАГРУЗКА ВОПРОСА
-// =======================
-
+/* QUESTION */
 function loadQuestion(){
 
-    if (questionIndex >= currentQuestions.length){
+    let totalQuestions = (currentLevel % 10 === 0) ? 5 : 1;
+
+    if (questionIndex >= totalQuestions){
         finishLevel();
         return;
     }
 
-    const q = currentQuestions[questionIndex];
+    let q = generateQuestion();
+    currentQuestionData = q;
 
     document.getElementById("question").innerText = q.question;
 
-    const answersEl = document.getElementById("answers");
-    answersEl.innerHTML = "";
+    let answersDiv = document.getElementById("answers");
+    answersDiv.innerHTML = "";
 
-    q.answers.forEach((answer, i) => {
+    q.answers.forEach((a, i) => {
 
-        const btn = document.createElement("button");
-        btn.innerText = answer;
+        let btn = document.createElement("button");
 
-        btn.onclick = () => handleAnswer(btn, i, q.correct);
+        btn.className = "answer";
+        btn.innerText = a;
 
-        answersEl.appendChild(btn);
+        btn.onclick = () => checkAnswer(i, q.correct);
+
+        answersDiv.appendChild(btn);
     });
-
-    updateProgress();
 }
 
-
-// =======================
-// ПРОГРЕСС
-// =======================
-
-function updateProgress(){
-    const el = document.getElementById("progress");
-    if (!el) return;
-
-    el.innerText = (questionIndex + 1) + " / " + currentQuestions.length;
-}
-
-
-// =======================
-// ОБРАБОТКА ОТВЕТА
-// =======================
-
-function handleAnswer(button, selectedIndex, correctIndex){
-
-    const buttons = document.querySelectorAll("#answers button");
-
-    buttons.forEach(btn => btn.disabled = true);
+/* ANSWER */
+function checkAnswer(selectedIndex, correctIndex){
 
     if (selectedIndex === correctIndex){
 
-        button.style.background = "green";
-
-        streak++;
-        coins += 5 + streak;
-
-        updateUI();
-
-        setTimeout(() => {
-            questionIndex++;
-            loadQuestion();
-        }, 500);
+        questionIndex++;
+        loadQuestion();
 
     } else {
 
-        button.style.background = "red";
+        ScreenManager.show("continueScreen");
 
-        buttons[correctIndex].style.background = "green";
-
-        streak = 0;
-
-        loseLife();
-
-        setTimeout(() => {
-            ScreenManager.show("continueScreen");
-        }, 700);
     }
 }
 
-
-// =======================
-// CONTINUE
-// =======================
-
-function continueGame(){
-    ScreenManager.show("gameScreen");
+/* CONTINUE */
+function watchAd(){
+    ScreenManager.show("game");
     loadQuestion();
 }
 
-function watchAdContinue(){
-    rewardAd();
-    continueGame();
-}
+function loseLife(){
 
-
-// =======================
-// ФИНИШ УРОВНЯ
-// =======================
-
-function finishLevel(){
-
-    coins += 50;
-
-    if (currentLevel >= unlockedLevel){
-        unlockedLevel++;
-    }
+    lives--;
 
     updateUI();
 
-    ScreenManager.show("winScreen");
+    if (lives <= 0){
+        alert("Game Over");
+        location.reload();
+    }
+
+    ScreenManager.show("game");
 }
 
+/* SHOP LOGIC */
+function buyRemoveTwo(){
 
-// =======================
-// GAME OVER
-// =======================
-
-function showGameOver(){
-    ScreenManager.show("gameOverScreen");
-}
-
-
-// =======================
-// ПОКУПКИ
-// =======================
-
-function buyLife(){
-
-    if (coins < 50){
-        notEnoughCoins();
+    if (coins < 120){
+        alert("Недостаточно монет");
         return;
     }
 
-    coins -= 50;
-    lives++;
-
+    coins -= 120;
     updateUI();
+
+    removeTwoAnswers();
 }
 
-function buyCoinsPack(){
+function buySkip(){
 
-    // заглушка под реальные покупки
-    coins += 200;
-
-    updateUI();
-}
-
-
-// =======================
-// ВОССТАНОВЛЕНИЕ ЖИЗНЕЙ
-// =======================
-
-setInterval(() => {
-
-    if (lives < 5){
-        lives++;
-        updateUI();
+    if (coins < 100){
+        alert("Недостаточно монет");
+        return;
     }
 
-}, 300000); // 5 минут
+    coins -= 100;
+    updateUI();
 
+    questionIndex++;
+    loadQuestion();
+}
 
-// =======================
-// INIT
-// =======================
+function buyHint(){
 
+    if (coins < 200){
+        alert("Недостаточно монет");
+        return;
+    }
+
+    coins -= 200;
+    updateUI();
+
+    alert("Ответ: " + currentQuestionData.answers[currentQuestionData.correct]);
+}
+
+function removeTwoAnswers(){
+
+    let buttons = document.querySelectorAll(".answer");
+    let removed = 0;
+
+    buttons.forEach((btn, i) => {
+
+        if (i !== currentQuestionData.correct && removed < 2){
+
+            btn.style.display = "none";
+            removed++;
+
+        }
+
+    });
+}
+
+/* FINISH */
+function finishLevel(){
+
+    reward = (currentLevel % 10 === 0) ? 120 : 20;
+
+    document.getElementById("rewardCoins").innerText = reward;
+
+    ScreenManager.show("reward");
+}
+
+function nextLevel(){
+
+    coins += reward;
+
+    updateUI();
+
+    ScreenManager.show("map");
+}
+
+/* INIT */
+loadGame();
+createLevels();
 updateUI();
+ScreenManager.show("startScreen");
+
+
+
+
+
+
+
+    
