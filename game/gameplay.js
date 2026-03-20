@@ -1,194 +1,195 @@
-// ====== ЗАГРУЗКА СОХРАНЕНИЯ ======
-loadGame();
-
-// ====== ПЕРЕМЕННЫЕ ======
+let currentLevel = 1;
 let questionIndex = 0;
 let currentQuestionData = null;
 
-// ====== СТАРТ ======
-function startGame(){
-    questionIndex = 0;
-    loadQuestion();
-    updateUI();
-}
+const livesUI = document.getElementById("lives");
+const coinsUI = document.getElementById("coins");
 
-// ====== ЗАГРУЗКА ВОПРОСА ======
-function loadQuestion(){
-
-    const buttons = document.querySelectorAll(".answer-btn");
-
-    // вернуть кнопки если были скрыты
-    buttons.forEach(btn => {
-        btn.style.display = "block";
-    });
-
-    currentQuestionData = questions[questionIndex];
-
-    document.getElementById("question").innerText = currentQuestionData.question;
-
-    buttons.forEach((btn, i) => {
-        btn.innerText = currentQuestionData.answers[i];
-        btn.onclick = () => checkAnswer(i);
-    });
-}
-
-// ====== ПРОВЕРКА ОТВЕТА ======
-function checkAnswer(index){
-
-    if (index === currentQuestionData.correct){
-        coins += 10; // награда
-        showPopup("Правильно!");
-    } else {
-        showPopup("Неправильно");
-    }
-
-    updateUI();
-
-    setTimeout(() => {
-        nextQuestion();
-    }, 800);
-}
-
-// ====== СЛЕДУЮЩИЙ ВОПРОС ======
-function nextQuestion(){
-    questionIndex++;
-
-    if (questionIndex >= questions.length){
-        endGame();
-        return;
-    }
-
-    loadQuestion();
-}
-
-// ====== КОНЕЦ ИГРЫ ======
-function endGame(){
-    showPopup("Уровень пройден!");
-    questionIndex = 0;
-}
-
-// ====== ОБНОВЛЕНИЕ UI ======
-function updateUI(){
-
-    const coinsEl = document.getElementById("coins");
-    if (coinsEl){
-        coinsEl.innerText = coins;
-    }
-
-    const r = document.getElementById("booster-removeTwo");
-    const s = document.getElementById("booster-skip");
-    const h = document.getElementById("booster-hint");
-
-    if (r) r.innerText = boosters.removeTwo;
-    if (s) s.innerText = boosters.skip;
-    if (h) h.innerText = boosters.hint;
-
+function updateUI() {
+    livesUI.innerText = lives;
+    coinsUI.innerText = coins;
     saveGame();
 }
 
-// ====== ПОКУПКА БУСТЕРОВ ======
-function buyBooster(type, price){
+/* START */
+function startGame(){
+    ScreenManager.show("map");
+}
 
-    if (coins < price){
-        showPopup("Недостаточно монет");
+function goToMap(){
+    ScreenManager.show("map");
+}
+
+/* SHOP */
+function openShop(){
+    ScreenManager.show("shop");
+}
+
+/* LEVEL */
+function startLevel(level){
+
+    currentLevel = parseInt(level);
+    questionIndex = 0;
+
+    document.getElementById("levelTitle").innerText = "Level " + level;
+
+    ScreenManager.show("game");
+
+    loadQuestion();
+}
+
+/* QUESTION */
+function loadQuestion(){
+
+    let totalQuestions = (currentLevel % 10 === 0) ? 5 : 1;
+
+    if (questionIndex >= totalQuestions){
+        finishLevel();
         return;
     }
 
-    coins -= price;
-    boosters[type]++;
+    let q = generateQuestion();
+    currentQuestionData = q;
+
+    document.getElementById("question").innerText = q.question;
+
+    let answersDiv = document.getElementById("answers");
+    answersDiv.innerHTML = "";
+
+    q.answers.forEach((a, i) => {
+
+        let btn = document.createElement("button");
+
+        btn.className = "answer";
+        btn.innerText = a;
+
+        btn.onclick = () => checkAnswer(i, q.correct);
+
+        answersDiv.appendChild(btn);
+    });
+}
+
+/* ANSWER */
+function checkAnswer(selectedIndex, correctIndex){
+
+    if (selectedIndex === correctIndex){
+
+        questionIndex++;
+        loadQuestion();
+
+    } else {
+
+        ScreenManager.show("continueScreen");
+
+    }
+}
+
+/* CONTINUE */
+function watchAd(){
+    ScreenManager.show("game");
+    loadQuestion();
+}
+
+function loseLife(){
+
+    lives--;
 
     updateUI();
 
-    showPopup("Куплено!");
+    if (lives <= 0){
+        alert("Game Over");
+        location.reload();
+    }
+
+    ScreenManager.show("game");
 }
 
-// ====== ИСПОЛЬЗОВАНИЕ ======
+/* SHOP LOGIC */
+function buyRemoveTwo(){
 
-function useRemoveTwo(){
-
-    if (boosters.removeTwo <= 0){
-        showBuyPopup("removeTwo", 120);
+    if (coins < 120){
+        alert("Недостаточно монет");
         return;
     }
 
-    boosters.removeTwo--;
+    coins -= 120;
     updateUI();
 
     removeTwoAnswers();
 }
 
-function useSkip(){
+function buySkip(){
 
-    if (boosters.skip <= 0){
-        showBuyPopup("skip", 200);
+    if (coins < 100){
+        alert("Недостаточно монет");
         return;
     }
 
-    boosters.skip--;
+    coins -= 100;
     updateUI();
 
-    nextQuestion();
+    questionIndex++;
+    loadQuestion();
 }
 
-function useHint(){
+function buyHint(){
 
-    if (boosters.hint <= 0){
-        showBuyPopup("hint", 100);
+    if (coins < 200){
+        alert("Недостаточно монет");
         return;
     }
 
-    boosters.hint--;
+    coins -= 200;
     updateUI();
 
-    showHint();
+    alert("Ответ: " + currentQuestionData.answers[currentQuestionData.correct]);
 }
-
-// ====== ЛОГИКА БУСТЕРОВ ======
 
 function removeTwoAnswers(){
 
-    const buttons = document.querySelectorAll(".answer-btn");
-    let wrongIndexes = [];
+    let buttons = document.querySelectorAll(".answer");
+    let removed = 0;
 
     buttons.forEach((btn, i) => {
-        if (i !== currentQuestionData.correct){
-            wrongIndexes.push(i);
+
+        if (i !== currentQuestionData.correct && removed < 2){
+
+            btn.style.display = "none";
+            removed++;
+
         }
+
     });
-
-    wrongIndexes.sort(() => Math.random() - 0.5);
-
-    for (let i = 0; i < 2; i++){
-        buttons[wrongIndexes[i]].style.display = "none";
-    }
 }
 
-function showHint(){
-    showPopup("Подумай ещё 🤔");
+/* FINISH */
+function finishLevel(){
+
+    reward = (currentLevel % 10 === 0) ? 120 : 20;
+
+    document.getElementById("rewardCoins").innerText = reward;
+
+    ScreenManager.show("reward");
 }
 
-// ====== POPUP ПОКУПКИ ======
+function nextLevel(){
 
-function showBuyPopup(type, price){
+    coins += reward;
 
-    const popup = document.getElementById("buyPopup");
+    updateUI();
 
-    popup.innerHTML = `
-        <div class="popup-box">
-            <p>Купить за ${price} монет?</p>
-            <button onclick="confirmBuy('${type}', ${price})">Купить</button>
-            <button onclick="closeBuyPopup()">Отмена</button>
-        </div>
-    `;
-
-    popup.style.display = "flex";
+    ScreenManager.show("map");
 }
 
-function confirmBuy(type, price){
-    closeBuyPopup();
-    buyBooster(type, price);
-}
+/* INIT */
+loadGame();
+createLevels();
+updateUI();
+ScreenManager.show("startScreen");
 
-function closeBuyPopup(){
-    document.getElementById("buyPopup").style.display = "none";
-                    }
+
+
+
+
+
+
